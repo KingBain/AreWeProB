@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Are We Protected B?</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            text-align: center;
+            font-size: 2em;
+        }
+        .domain {
+            font-weight: bold;
+            font-size: 2.2em; /* Makes the domain one size larger */
+        }
+        .soon {
+            color: #FFFFFF; /* White text */
+            background-color: #FFA500; /* Orange background */
+        }
+    </style>
+</head>
+<body>
+    <div class="content" id="content">
+        Are we prob? Navigate with parameters to find out!
+    </div>
+    <script>
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (pair[0] == variable) {
+                    return decodeURIComponent(pair[1].replace(/\+/g, ' '));
+                }
+            }
+            return (false);
+        }
+
+        function checkParameters() {
+            var domain = getQueryVariable("domain");
+            var prob = getQueryVariable("prob");
+            var message = "Are we prob? Navigate with parameters to find out!"; // Default message
+            if (domain) {
+                message = "Is <span class='domain'>" + domain + "</span> Protected B, ";
+                if (prob === "true") {
+                    document.body.style.backgroundColor = "green";
+                    message += "Yes";
+                } else if (prob === "false") {
+                    document.body.style.backgroundColor = "#FFA500"; // Orange background for "Soon..."
+                    document.getElementById("content").classList.add("soon");
+                    message += "Soon...";
+                }
+            }
+            document.getElementById("content").innerHTML = message;
+        }
+
+        // Run the check when the page loads
+        checkParameters();
+    </script>
+</body>
+</html>
