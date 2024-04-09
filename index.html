@@ -8,12 +8,13 @@
         body, html {
             height: 100%;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-family: Arial, sans-serif;
         }
         .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 90%; /* Leave some space for the footer */
             text-align: center;
             font-size: 2em;
         }
@@ -25,12 +26,36 @@
             color: #FFFFFF; /* White text */
             background-color: #FFA500; /* Orange background */
         }
+        footer {
+            text-align: center;
+            font-size: 1em;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 10px 0;
+            background-color: #333; /* Dark background for footer */
+            color: white; /* White text for footer */
+        }
+        footer a {
+            color: #9DCEFF; /* Light blue color for links */
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <div class="content" id="content">
         Are we prob? Navigate with parameters to find out!
     </div>
+
+    <!-- Footer section -->
+    <footer>
+        Check out the project on GitHub: 
+        <a href="https://github.com/KingBain/AreWeProB" target="_blank">KingBain/AreWeProB</a>
+    </footer>
+
     <script>
         function getQueryVariable(variable) {
             var query = window.location.search.substring(1);
@@ -47,7 +72,7 @@
         function checkParameters() {
             var domain = getQueryVariable("domain");
             var prob = getQueryVariable("prob");
-            var message = "Are we prob? Navigate with parameters to find out!"; // Default message
+            var message = "Are we Protected B ? Navigate with parameters to find out!"; // Default message
             if (domain) {
                 message = "Is <span class='domain'>" + domain + "</span> Protected B, ";
                 if (prob === "true") {
