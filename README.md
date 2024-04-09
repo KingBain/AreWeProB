@@ -1,7 +1,7 @@
 # Are We Protected B?
 
 ## Overview
-"Are We Protected B?" is a web-based tool designed to provide a quick and snarky response to the commonly asked question in the context of Canadian Government security levels: "Are we Protected B?" The tool offers a humorous yet straightforward answer depending on the security status of a given domain.
+"Are We Protected B?" is a web-based tool designed to provide a quick and snarky response to the commonly asked question "Are we Protected B?". The tool offers a humorous yet straightforward answer depending on the security status of a given domain.
 
 This project consists of two main parts:
 
