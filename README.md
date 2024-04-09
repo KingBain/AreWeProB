@@ -10,7 +10,7 @@ This project consists of two main parts:
 2. **The API (`/api/index.php`)**: A simple PHP script that returns a JSON object indicating the security status of a domain as per the "Protected B" standard.
 
 ## How It Works
-- **Landing Page**: Users are prompted with the message "Are we prob? Navigate with parameters to find out!" They can pass parameters in the URL to get a customized response. For example, appending `?domain=gcp.hc-sc.gc.ca&prob=true` to the URL will cause the page to show a green background with the text "Yes", indicating that the domain is "Protected B" compliant.
+- **Landing Page**: Users are prompted with the message "Are we prob? Navigate with parameters to find out!" They can pass parameters in the URL to get a customized response. For example, appending `?domain=google.com&prob=true` to the URL will cause the page to show a green background with the text "Yes", indicating that the domain is "Protected B" compliant.
 
 - **API**: By navigating to `/api/index.php?domain=example.com&prob=true`, the API returns a JSON response with the domain name and a boolean indicating the "Protected B" status.
 
