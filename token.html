@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Protected Site Certification JWT Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        form {
+            background-color: #ffffff;
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333333;
+        }
+
+        input, select, button, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Add this to include padding in width calculation */
+            font-size: 16px; /* Uniform text size */
+        }
+
+        button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #003d82;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+            font-family: monospace;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #jwtOutput {
+            background-color: #e9e9e9;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            background-color: #fbfbfb; /* Light grey background for readability */
+            color: #333; /* Darker text for contrast */
+            font-family: 'Courier New', monospace; /* Monospace font for JSON */
+            padding: 10px;
+            border: 1px solid #ddd; /* Lighter border */
+            border-radius: 4px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Slight inner shadow for depth */
+            margin-bottom: 20px; /* Consistent margin with other inputs */
+            overflow-y: auto; /* Auto scrollbar for overflow */
+            height: auto; /* Adjust height as needed */
+            min-height: 100px; /* Minimum height */
+            resize: vertical; /* Allow vertical resize only */
+        }
+    </style>
+</head>
+<body>
+    <h2>Generate Certification JWT</h2>
+    <form id="jwtForm">
+        <label for="certifierName">Full Name of Certifier:</label>
+        <input type="text" id="certifierName" name="certifierName" required>
+
+        <label for="certificationDate">Date of Certification:</label>
+        <input type="date" id="certificationDate" name="certificationDate" required>
+
+        <label for="expirationDate">Certification Expiration Date:</label>
+        <input type="date" id="expirationDate" name="expirationDate" required>
+
+        <label for="rsaPrivateKey">RSA Private Key:</label>
+        <textarea id="rsaPrivateKey" name="rsaPrivateKey" rows="5" required></textarea>
+
+        <label for="securityStatus">Security Status:</label>
+        <select id="securityStatus" name="securityStatus" required>
+            <option value="Unclassed">Unclassed</option>
+            <option value="Protected A">Protected A</option>
+            <option value="Protected B">Protected B</option>
+            <option value="Protected C">Protected C</option>
+        </select>
+
+        <label for="domain">Domain Being Certified:</label>
+        <input type="text" id="domain" name="domain" required>
+
+        <label for="contactEmail">Contact Email Address:</label>
+        <input type="email" id="contactEmail" name="contactEmail" required>
+
+        <button type="button" onclick="generateJWT()">Generate JWT</button>
+        <!-- Add this line for the new download button, initially disabled -->
+        <button type="button" id="downloadBtn" onclick="downloadJWT()" disabled>Download JWT Token</button>
+    </form>
+
+    <p><strong>JWT:</strong></p>
+    <textarea id="jwtOutput" readonly></textarea>
+
+    <p><strong>Decoded JWT Payload:</strong></p>
+    <textarea id="decodedJwtOutput" readonly></textarea>
+
+    <script src="https://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js"></script>
+    <script>
+        function generateJWT() {
+            const certifierName = document.getElementById("certifierName").value;
+            const certificationDate = document.getElementById("certificationDate").value;
+            const expirationDate = document.getElementById("expirationDate").value; // Get the expiration date value
+            const rsaPrivateKey = document.getElementById("rsaPrivateKey").value;
+            const securityStatus = document.getElementById("securityStatus").value;
+            const domain = document.getElementById("domain").value;
+            const contactEmail = document.getElementById("contactEmail").value;
+
+            const oHeader = {alg: 'RS256', typ: 'JWT'};
+
+            const payload = {
+                certifierName,
+                certificationDate,
+                expirationDate,
+                securityStatus,
+                domain,
+                contactEmail,
+                iat: Math.floor(Date.now() / 1000)
+            };
+
+            // Convert the RSA private key string to an RSAKey object
+            const key = KEYUTIL.getKey(rsaPrivateKey);
+
+            // Sign JWT
+            const sJWT = KJUR.jws.JWS.sign(null, oHeader, JSON.stringify(payload), key);
+
+            // Set the JWT in the output textarea
+            document.getElementById("jwtOutput").value = sJWT;
+            document.getElementById("downloadBtn").disabled = false;
+            displayDecodedJWT();
+        }
+
+        function displayDecodedJWT() {
+            const jwt = document.getElementById("jwtOutput").value;
+            const jwtParts = jwt.split('.');
+            const encodedPayload = jwtParts[1];
+            const decodedPayload = base64urlDecode(encodedPayload);
+
+            // Parse the payload into an object and then stringify it with indentation for formatting
+            const prettyPayload = JSON.stringify(JSON.parse(decodedPayload), null, 2);
+
+            document.getElementById("decodedJwtOutput").value = prettyPayload;
+        }
+
+        function base64urlDecode(str) {
+            // Replace URL-safe chars with their standard equivalents
+            const input = str.replace(/-/g, '+').replace(/_/g, '/');
+            // Pad out with standard base64 required padding characters
+            const padLength = (4 - (input.length % 4)) % 4;
+            const base64 = input.concat('='.repeat(padLength));
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return jsonPayload;
+        }
+
+        function downloadJWT() {
+            const jwt = document.getElementById("jwtOutput").value;
+            const blob = new Blob([jwt], { type: 'application/json' });
+            const href = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = href;
+            link.download = "certification.jwt";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            // Revoke the blob URL to free up resources
+            URL.revokeObjectURL(href);
+        }
+    </script>
+</body>
+</html>
